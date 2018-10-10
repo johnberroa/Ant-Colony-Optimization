@@ -1,4 +1,4 @@
-# Ant-Colony-Optimization
+# Ant Colony Optimization
 A Python implementation of the Ant Colony Optimization algorithm for generating solutions to such tasks as the Traveling Salesman Problem
 
 
@@ -15,4 +15,4 @@ optimizer.plot()
 ## Example Plot
 ![ACO Fitted](ACO.png?raw=true "ACO Fitted")
 
-###### Now 20x faster than the original!
+###### Now 20x faster than my first attempt!
