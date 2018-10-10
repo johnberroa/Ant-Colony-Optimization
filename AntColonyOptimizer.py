@@ -238,6 +238,10 @@ class AntColonyOptimizer:
             raise ValueError("Invalid mode!  Choose 'min' or 'max'.")
 
     def plot(self):
+        """
+        Plots the score over time after the model has been fitted.
+        :return: None if the model isn't fitted yet
+        """
         if not self.fitted:
             print("Ant Colony Optimizer not fitted!  There exists nothing to plot.")
             return None
@@ -254,6 +258,3 @@ class AntColonyOptimizer:
             ax.legend()
             plt.title("Ant Colony Optimization Results (best: {})".format(np.round(self.best, 2)))
             plt.show()
-
-
-
