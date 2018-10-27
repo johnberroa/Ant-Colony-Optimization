@@ -4,7 +4,7 @@ A Python implementation of the Ant Colony Optimization algorithm for generating 
 
 ## Example Usage
 ```python
-problem = some_problem
+problem = some_distance_matrix
 optimizer = AntColonyOptimizer(ants=10, evaporation_rate=.1, intensification=2, alpha=1, beta=1,
                                beta_evaporation_rate=0, choose_best=.1)
  
