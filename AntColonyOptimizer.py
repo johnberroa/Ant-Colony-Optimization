@@ -110,12 +110,12 @@ class AntColonyOptimizer:
         """
         numerator = self.probability_matrix[from_node, self.set_of_available_nodes]
         if np.random.random() < self.choose_best:
-            next = np.argmax(numerator)
+            next_node = np.argmax(numerator)
         else:
             denominator = np.sum(numerator)
             probabilities = numerator / denominator
-            next = np.random.choice(range(len(probabilities)), p=probabilities)
-        return next
+            next_node = np.random.choice(range(len(probabilities)), p=probabilities)
+        return next_node
 
     def _remove_node(self, node):
         self.set_of_available_nodes.remove(node)
@@ -163,16 +163,16 @@ class AntColonyOptimizer:
         j = best_coords[1]
         self.pheromone_matrix[i, j] += self.pheromone_intensification
 
-    def fit(self, map, iter=100, mode='min', verbose=True):  # TODO: Add verbosity
+    def fit(self, map_matrix, iter=100, mode='min', verbose=True):
         """
         Fits the ACO to a specific map.  This was designed with the Traveling Salesman problem in mind.
-        :param map: Distance matrix or some other matrix with similar properties
+        :param map_matrix: Distance matrix or some other matrix with similar properties
         :param iter: number of iterations
         :param mode: whether to get the minimum path or maximum path
         :return: the best score
         """
         if verbose: print("Beginning ACO Optimization with {} iterations...".format(iter))
-        self.map = map
+        self.map = map_matrix
         start = time.time()
         self._initialize()
         for i in range(iter):
@@ -247,7 +247,7 @@ class AntColonyOptimizer:
             return None
         else:
             fig, ax = plt.subplots(figsize=(20, 15))
-            ax.plot(optimizer.best_series, label="Best Run")
+            ax.plot(self.best_series, label="Best Run")
             ax.set_xlabel("Iteration")
             ax.set_ylabel("Performance")
             ax.text(.8, .8,
