@@ -163,19 +163,19 @@ class AntColonyOptimizer:
         j = best_coords[1]
         self.pheromone_matrix[i, j] += self.pheromone_intensification
 
-    def fit(self, map_matrix, iter=100, mode='min', verbose=True):
+    def fit(self, map_matrix, iterations=100, mode='min', verbose=True):
         """
         Fits the ACO to a specific map.  This was designed with the Traveling Salesman problem in mind.
         :param map_matrix: Distance matrix or some other matrix with similar properties
-        :param iter: number of iterations
+        :param iterations: number of iterations
         :param mode: whether to get the minimum path or maximum path
         :return: the best score
         """
-        if verbose: print("Beginning ACO Optimization with {} iterations...".format(iter))
+        if verbose: print("Beginning ACO Optimization with {} iterations...".format(iterations))
         self.map = map_matrix
         start = time.time()
         self._initialize()
-        for i in range(iter):
+        for i in range(iterations):
             start_iter = time.time()
             paths = []
             path = []
@@ -223,7 +223,7 @@ class AntColonyOptimizer:
 
         self.fit_time = round(time.time() - start)
         self.fitted = True
-        self.plot_x_coord = iter - 1
+        self.plot_x_coord = iterations - 1
 
         if mode == 'min':
             self.best = self.best_series[np.argmin(self.best_series)]
