@@ -45,8 +45,7 @@ class AntColonyOptimizer:
         self.fit_time = None
 
         # Plotting values
-        self.plot_y_coord = None
-        self.plot_x_coord = None
+        self.stopped_early = False
 
     def __str__(self):
         string = "Ant Colony Optimizer"
@@ -163,18 +162,21 @@ class AntColonyOptimizer:
         j = best_coords[1]
         self.pheromone_matrix[i, j] += self.pheromone_intensification
 
-    def fit(self, map_matrix, iterations=100, mode='min', verbose=True):
+    def fit(self, map_matrix, iterations=100, mode='min', early_stopping_count=20, verbose=True):
         """
         Fits the ACO to a specific map.  This was designed with the Traveling Salesman problem in mind.
         :param map_matrix: Distance matrix or some other matrix with similar properties
         :param iterations: number of iterations
         :param mode: whether to get the minimum path or maximum path
+        :param early_stopping_count: how many iterations of the same score to make the algorithm stop early
         :return: the best score
         """
         if verbose: print("Beginning ACO Optimization with {} iterations...".format(iterations))
         self.map = map_matrix
         start = time.time()
         self._initialize()
+        num_equal = 0
+
         for i in range(iterations):
             start_iter = time.time()
             paths = []
@@ -201,7 +203,6 @@ class AntColonyOptimizer:
 
             if i == 0:
                 best_score_so_far = best_score
-                self.plot_y_coord = best_score
             else:
                 if mode == 'min':
                     if best_score < best_score_so_far:
@@ -212,6 +213,11 @@ class AntColonyOptimizer:
                         best_score_so_far = best_score
                         self.best_path = best_path
 
+            if best_score == best_score_so_far:
+                num_equal += 1
+            else:
+                num_equal = 0
+
             self.best_series.append(best_score)
             self._evaporation()
             self._intensify(best_path_coords)
@@ -221,9 +227,13 @@ class AntColonyOptimizer:
                               "".format(i, round(best_score, 2), round(best_score_so_far, 2),
                                         round(time.time() - start_iter)))
 
+            if best_score == best_score_so_far and num_equal == early_stopping_count:
+                self.stopped_early = True
+                print("Stopping early due to {} iterations of the same score.".format(early_stopping_count))
+                break
+
         self.fit_time = round(time.time() - start)
         self.fitted = True
-        self.plot_x_coord = iterations - 1
 
         if mode == 'min':
             self.best = self.best_series[np.argmin(self.best_series)]
@@ -251,10 +261,11 @@ class AntColonyOptimizer:
             ax.plot(self.best_series, label="Best Run")
             ax.set_xlabel("Iteration")
             ax.set_ylabel("Performance")
-            ax.text(.8, .8,
-                    'Ants: {}\nEvap Rate: {}\nIntensify: {}\nAlpha: {}\nBeta: {}\nBeta Evap: {}\nChoose Best: {}\n\nFit Time: {}m'.format(
+            ax.text(.8, .6,
+                    'Ants: {}\nEvap Rate: {}\nIntensify: {}\nAlpha: {}\nBeta: {}\nBeta Evap: {}\nChoose Best: {}\n\nFit Time: {}m{}'.format(
                         self.ants, self.evaporation_rate, self.pheromone_intensification, self.heuristic_alpha,
-                        self.heuristic_beta, self.beta_evaporation_rate, self.choose_best, self.fit_time // 60),
+                        self.heuristic_beta, self.beta_evaporation_rate, self.choose_best, self.fit_time // 60,
+                        ["\nStopped Early!" if self.stopped_early else ""][0]),
                     bbox={'facecolor': 'gray', 'alpha': 0.8, 'pad': 10}, transform=ax.transAxes)
             ax.legend()
             plt.title("Ant Colony Optimization Results (best: {})".format(np.round(self.best, 2)))
