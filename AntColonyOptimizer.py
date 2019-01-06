@@ -227,7 +227,8 @@ class AntColonyOptimizer:
 
         if mode == 'min':
             self.best = self.best_series[np.argmin(self.best_series)]
-            if verbose: print("ACO fitted.  Best score: {}".format(self.best))
+            if verbose: print(
+                "ACO fitted.  Runtime: {} minutes.  Best score: {}".format(self.fit_time // 60, self.best))
             return self.best
         elif mode == 'max':
             self.best = self.best_series[np.argmax(self.best_series)]
