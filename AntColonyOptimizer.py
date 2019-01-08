@@ -8,7 +8,7 @@ warnings.filterwarnings("ignore")
 
 
 class AntColonyOptimizer:
-    def __init__(self, ants, evaporation_rate, intensification, alpha=1, beta=0, beta_evaporation_rate=0,
+    def __init__(self, ants, evaporation_rate, intensification, alpha=1.0, beta=0.0, beta_evaporation_rate=0,
                  choose_best=.1):
         """
         Ant colony optimizer.  Traverses a graph and finds either the max or min distance between nodes.
